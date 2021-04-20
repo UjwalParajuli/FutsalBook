@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Futsal Book</string>
+    <string name="login">Already have an account?<font color='#54e346'> Login</font></string>
+</resources>
