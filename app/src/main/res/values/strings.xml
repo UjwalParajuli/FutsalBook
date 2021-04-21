@@ -1,4 +1,6 @@
 <resources>
+    <item name="item_click_support" type="id" />
     <string name="app_name">Futsal Book</string>
     <string name="login">Already have an account?<font color='#54e346'> Login</font></string>
+    <string name="signup">Not Signed Up Yet?<font color='#54e346'> Sign Up</font></string>
 </resources>

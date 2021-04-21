@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:fillViewport="true"
-    tools:context=".SignUpActivity">
+    tools:context=".LoginActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,6 +15,7 @@
             android:id="@+id/imageView3"
             android:layout_width="0dp"
             android:layout_height="150dp"
+            android:layout_marginTop="35dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -26,6 +26,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="35dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="35dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -37,65 +38,31 @@
 
 
                 <Button
-                    android:id="@+id/button_sign_up"
+                    android:id="@+id/button_login"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="27dp"
                     android:background="@drawable/button_background"
                     android:fontFamily="@font/jost_medium"
-                    android:text="Create Account"
+                    android:text="Login"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="18dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/password_toggle" />
+                    app:layout_constraintTop_toBottomOf="@+id/password_toggle_login" />
 
                 <EditText
-                    android:id="@+id/edit_text_sign_up_email"
+                    android:id="@+id/edit_text_login_email"
                     android:layout_width="0dp"
                     android:layout_height="45dp"
-                    android:layout_marginTop="25dp"
+                    android:layout_marginTop="45dp"
                     android:background="@drawable/edit_text_background"
                     android:drawableStart="@drawable/ic_baseline_email_24"
                     android:drawablePadding="16dp"
                     android:ems="10"
                     android:hint="Email"
                     android:inputType="textEmailAddress"
-                    android:padding="12dp"
-                    android:textSize="14dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/edit_text_full_name" />
-
-                <EditText
-                    android:id="@+id/edit_text_sign_up_phone"
-                    android:layout_width="0dp"
-                    android:layout_height="45dp"
-                    android:layout_marginTop="25dp"
-                    android:background="@drawable/edit_text_background"
-                    android:drawableStart="@drawable/ic_baseline_phone_android_24"
-                    android:drawablePadding="16dp"
-                    android:ems="10"
-                    android:hint="Phone"
-                    android:inputType="phone"
-                    android:padding="12dp"
-                    android:textSize="14dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/edit_text_sign_up_email" />
-
-                <EditText
-                    android:id="@+id/edit_text_full_name"
-                    android:layout_width="0dp"
-                    android:layout_height="45dp"
-                    android:layout_marginTop="45dp"
-                    android:background="@drawable/edit_text_background"
-                    android:drawableStart="@drawable/ic_baseline_person_24"
-                    android:drawablePadding="16dp"
-                    android:ems="10"
-                    android:hint="Full Name"
-                    android:inputType="textPersonName"
                     android:padding="12dp"
                     android:textSize="14dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -107,7 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/jost_bold"
-                    android:text="Sign Up"
+                    android:text="Login"
                     android:textColor="@color/alternate_black_headings"
                     android:textSize="32dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -115,29 +82,30 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/password_toggle"
+                    android:id="@+id/password_toggle_login"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_marginTop="25dp"
                     android:background="@drawable/edit_text_background"
                     android:backgroundTint="@null"
                     android:gravity="bottom"
-                    android:hint="Password"
                     app:boxBackgroundMode="none"
                     app:errorEnabled="true"
+                    android:hint="Password"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/edit_text_sign_up_phone"
-                    app:layout_constraintTop_toBottomOf="@+id/edit_text_sign_up_phone"
+                    app:layout_constraintStart_toStartOf="@+id/edit_text_login_email"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_text_login_email"
                     app:passwordToggleEnabled="true"
                     app:passwordToggleTint="#575757"
                     app:startIconDrawable="@drawable/ic_baseline_lock_24"
                     app:startIconTint="#575757">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edit_text_sign_up_password"
+                        android:id="@+id/edit_text_login_password"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:inputType="textPassword"
+                        android:hint="Password"
                         android:padding="8dp"
                         android:textSize="14dp" />
 
@@ -147,32 +115,32 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/text_view_log_in"
+        <ProgressBar
+            android:id="@+id/progress_bar_login"
+            style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="45dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/text_view_sign_up"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linerLayout3" />
+
+        <TextView
+            android:id="@+id/text_view_sign_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
             android:layout_marginBottom="16dp"
             android:fontFamily="@font/jost_regular"
-            android:text="@string/login"
+            android:text="@string/signup"
             android:textSize="14dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/linerLayout3"
             app:layout_constraintStart_toStartOf="@+id/linerLayout3"
             app:layout_constraintTop_toBottomOf="@+id/linerLayout3"
-            app:layout_constraintVertical_bias="0.32999998" />
+            app:layout_constraintVertical_bias="0.25" />
 
-        <ProgressBar
-            android:id="@+id/progress_bar_create_account"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/text_view_log_in"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linerLayout3" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

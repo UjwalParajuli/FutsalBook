@@ -6,4 +6,7 @@
     <color name="alternate_black_headings">#575634</color>
     <color name="desc_text">#5D5D5D</color>
     <color name="border_color">#C6C6C6</color>
+    <color name="futsal_item">#F9F9F9</color>
+    <color name="futsal_item_heading">#393333</color>
+    <color name="futsal_details_location">#999999</color>
 </resources>
