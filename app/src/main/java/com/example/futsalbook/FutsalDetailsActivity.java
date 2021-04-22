@@ -5,7 +5,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -47,6 +50,7 @@ public class FutsalDetailsActivity extends AppCompatActivity {
     private RecyclerView recycler_view_available_time;
     private RatingBar ratingBar;
     private User user;
+    private float insert_rating, old_rating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +82,45 @@ public class FutsalDetailsActivity extends AppCompatActivity {
         recycler_view_available_time = findViewById(R.id.recycler_view_available_time);
         ratingBar = findViewById(R.id.ratingBar);
 
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                insert_rating = rating;
+                if (insert_rating != old_rating){
+                    insertRating();
+                }
+            }
+        });
+
+        button_see_all_reviews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("futsal_details", futsalModel);
+                Intent intent = new Intent(FutsalDetailsActivity.this, ReviewsActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+
+        image_view_saved.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeBookmark();
+            }
+        });
+
+        image_view_not_saved.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                insertBookmark();
+            }
+        });
+
         setData();
+        checkBookmark();
         getAvailableTimes();
+        getRating();
 
     }
 
@@ -91,6 +132,40 @@ public class FutsalDetailsActivity extends AppCompatActivity {
         text_view_futsal_phone.setText(futsalModel.getPhone());
         text_view_futsal_price.setText("Rs. " + futsalModel.getPrice_per_hour() + "/hr");
         text_view_futsal_description.setText(futsalModel.getDescription());
+    }
+
+    private void checkBookmark(){
+        String url = "https://rajkumargurung.com.np/futsal/check_bookmark.php";
+        final RequestQueue requestQueue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.trim().equals("not_found")) {
+                    image_view_saved.setVisibility(View.GONE);
+                    image_view_not_saved.setVisibility(View.VISIBLE);
+                }
+                else{
+                    image_view_not_saved.setVisibility(View.GONE);
+                    image_view_saved.setVisibility(View.VISIBLE);
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(FutsalDetailsActivity.this, ErrorUtils.getVolleyError(error), Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("futsal_id", String.valueOf(futsalModel.getFutsal_id()));
+                params.put("user_id", String.valueOf(user.getUser_id()));
+                return params;
+            }
+
+        };
+        requestQueue.add(stringRequest);
 
     }
 
@@ -111,7 +186,6 @@ public class FutsalDetailsActivity extends AppCompatActivity {
 
                         for (int i = 0; i < jsonArray.length(); i++){
                             jsonResponse = jsonArray.getJSONObject(i);
-                            int time_table_id = jsonResponse.getInt("time_table_id");
                             String start_time = jsonResponse.getString("start_time");
                             String end_time = jsonResponse.getString("end_time");
 
@@ -122,22 +196,7 @@ public class FutsalDetailsActivity extends AppCompatActivity {
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(FutsalDetailsActivity.this, LinearLayoutManager.HORIZONTAL, false);
                         recycler_view_available_time.setLayoutManager(linearLayoutManager);
                         recycler_view_available_time.setAdapter(timeAdapter);
-                        //recycler_view_available_time.addItemDecoration(new SpacesItemDecoration(20));
                         timeAdapter.notifyDataSetChanged();
-
-//                        ItemClickSupport.addTo(recycler_view_futsals).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-//                            @Override
-//                            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-//                                FutsalModel futsalModel = futsalModelArrayList.get(position);
-//                                Bundle bundle = new Bundle();
-//                                bundle.putSerializable("futsal_details", futsalModel);
-//                                Intent intent = new Intent(getContext(), FutsalDetailsActivity.class);
-//                                intent.putExtras(bundle);
-//                                startActivity(intent);
-//
-//                            }
-//                        });
-
 
                     }
 
@@ -158,6 +217,157 @@ public class FutsalDetailsActivity extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("futsal_id", String.valueOf(futsalModel.getFutsal_id()));
+                return params;
+            }
+
+        };
+        requestQueue.add(stringRequest);
+
+    }
+
+    private void getRating(){
+        String url = "https://rajkumargurung.com.np/futsal/get_rating.php";
+        final RequestQueue requestQueue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.trim().equals("not_found")) {
+
+                }
+                else{
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        JSONObject jsonResponse;
+
+                        jsonResponse = jsonArray.getJSONObject(0);
+                        double rating = jsonResponse.getDouble("rating");
+                        float f = (float) rating;
+                        old_rating = f;
+                        ratingBar.setRating(f);
+                    }
+                    catch (JSONException e) {
+                        Toast.makeText(FutsalDetailsActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(FutsalDetailsActivity.this, ErrorUtils.getVolleyError(error), Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("futsal_id", String.valueOf(futsalModel.getFutsal_id()));
+                params.put("user_id", String.valueOf(user.getUser_id()));
+                return params;
+            }
+
+        };
+        requestQueue.add(stringRequest);
+
+    }
+
+    private void insertRating(){
+        String url = "https://rajkumargurung.com.np/futsal/insert_rating.php";
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        final RequestQueue requestQueue = Volley.newRequestQueue(FutsalDetailsActivity.this);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                if (response.trim().equals("success")) {
+                    Toast.makeText(FutsalDetailsActivity.this, "Thank you for your rating", Toast.LENGTH_SHORT).show();
+                }
+                else if (response.trim().equals("delete_error")) {
+                    Toast.makeText(getApplicationContext(), "Error while deleting", Toast.LENGTH_SHORT).show();
+                }
+                else if (response.trim().equals("insert_errror")) {
+                    Toast.makeText(getApplicationContext(), "Error while inserting", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                Toast.makeText(FutsalDetailsActivity.this, ErrorUtils.getVolleyError(error), Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("futsal_id", String.valueOf(futsalModel.getFutsal_id()));
+                params.put("user_id", String.valueOf(user.getUser_id()));
+                params.put("rating", String.valueOf(insert_rating));
+                return params;
+            }
+        };
+        requestQueue.add(stringRequest);
+    }
+
+    private void removeBookmark(){
+        String url = "https://rajkumargurung.com.np/futsal/remove_bookmark.php";
+        final RequestQueue requestQueue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.trim().equals("success")) {
+                    image_view_saved.setVisibility(View.GONE);
+                    image_view_not_saved.setVisibility(View.VISIBLE);
+                }
+                else{
+                    Toast.makeText(FutsalDetailsActivity.this, "Error while removing", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(FutsalDetailsActivity.this, ErrorUtils.getVolleyError(error), Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("futsal_id", String.valueOf(futsalModel.getFutsal_id()));
+                params.put("user_id", String.valueOf(user.getUser_id()));
+                return params;
+            }
+
+        };
+        requestQueue.add(stringRequest);
+    }
+
+    private void insertBookmark(){
+        String url = "https://rajkumargurung.com.np/futsal/insert_bookmark.php";
+        final RequestQueue requestQueue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.trim().equals("success")) {
+                    image_view_not_saved.setVisibility(View.GONE);
+                    image_view_saved.setVisibility(View.VISIBLE);
+                }
+                else{
+                    Toast.makeText(FutsalDetailsActivity.this, "Error while saving", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(FutsalDetailsActivity.this, ErrorUtils.getVolleyError(error), Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("futsal_id", String.valueOf(futsalModel.getFutsal_id()));
+                params.put("user_id", String.valueOf(user.getUser_id()));
                 return params;
             }
 
