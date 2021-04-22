@@ -13,7 +13,8 @@
         android:theme="@style/Theme.FutsalBook"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
-        <activity android:name=".ConfirmBookingActivity"></activity>
+        <activity android:name=".TournamentDetailsActivity"></activity>
+        <activity android:name=".ConfirmBookingActivity" />
         <activity android:name=".ReviewsActivity" />
         <activity
             android:name=".FutsalDetailsActivity"
@@ -43,8 +44,8 @@
             </intent-filter>
         </activity>
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
