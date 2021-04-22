@@ -45,7 +45,7 @@ public class FutsalDetailsActivity extends AppCompatActivity {
     private TimeAdapter timeAdapter;
     private Toolbar toolbar;
     private ImageView futsal_image_full, image_view_saved, image_view_not_saved;
-    private TextView text_view_futsal_name, text_view_futsal_location, text_view_futsal_phone, text_view_futsal_price, text_view_futsal_description;
+    private TextView text_view_futsal_name, text_view_futsal_location, text_view_futsal_phone, text_view_futsal_price, text_view_futsal_description, text_view_sorry_message;
     private Button button_book_now, button_see_all_reviews;
     private RecyclerView recycler_view_available_time;
     private RatingBar ratingBar;
@@ -66,6 +66,7 @@ public class FutsalDetailsActivity extends AppCompatActivity {
 
         timeModelArrayList = new ArrayList<>();
         timeAdapter = new TimeAdapter(timeModelArrayList, FutsalDetailsActivity.this);
+        timeModelArrayList.clear();
 
         user = SharedPrefManager.getInstance(FutsalDetailsActivity.this).getUser();
 
@@ -77,6 +78,7 @@ public class FutsalDetailsActivity extends AppCompatActivity {
         text_view_futsal_phone = findViewById(R.id.text_view_futsal_phone);
         text_view_futsal_price = findViewById(R.id.text_view_futsal_price);
         text_view_futsal_description = findViewById(R.id.text_view_futsal_description);
+        text_view_sorry_message = findViewById(R.id.text_view_sorry_message);
         button_book_now = findViewById(R.id.button_book_now);
         button_see_all_reviews = findViewById(R.id.button_see_all_reviews);
         recycler_view_available_time = findViewById(R.id.recycler_view_available_time);
@@ -114,6 +116,13 @@ public class FutsalDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 insertBookmark();
+            }
+        });
+
+        button_book_now.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bookFutsal();
             }
         });
 
@@ -171,32 +180,42 @@ public class FutsalDetailsActivity extends AppCompatActivity {
 
     private void getAvailableTimes(){
         String url = "https://rajkumargurung.com.np/futsal/get_available_times.php";
-
+        timeModelArrayList.clear();
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response.trim().equals("not_found")) {
-
+                    recycler_view_available_time.setVisibility(View.INVISIBLE);
+                    text_view_sorry_message.setVisibility(View.VISIBLE);
                 }
                 else{
+                    timeModelArrayList.clear();
                     try {
                         JSONArray jsonArray = new JSONArray(response);
                         JSONObject jsonResponse;
 
                         for (int i = 0; i < jsonArray.length(); i++){
                             jsonResponse = jsonArray.getJSONObject(i);
+                            int time_table_id = jsonResponse.getInt("time_table_id");
                             String start_time = jsonResponse.getString("start_time");
                             String end_time = jsonResponse.getString("end_time");
 
-                            TimeModel timeModel = new TimeModel(start_time, end_time);
+                            TimeModel timeModel = new TimeModel(start_time, end_time, time_table_id);
                             timeModelArrayList.add(timeModel);
                         }
 
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(FutsalDetailsActivity.this, LinearLayoutManager.HORIZONTAL, false);
-                        recycler_view_available_time.setLayoutManager(linearLayoutManager);
-                        recycler_view_available_time.setAdapter(timeAdapter);
-                        timeAdapter.notifyDataSetChanged();
+                        if (timeModelArrayList.size() <= 0){
+                            recycler_view_available_time.setVisibility(View.INVISIBLE);
+                            text_view_sorry_message.setVisibility(View.VISIBLE);
+                        }
+                        else{
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(FutsalDetailsActivity.this, LinearLayoutManager.HORIZONTAL, false);
+                            recycler_view_available_time.setLayoutManager(linearLayoutManager);
+                            recycler_view_available_time.setAdapter(timeAdapter);
+                            timeAdapter.notifyDataSetChanged();
+                        }
+
 
                     }
 
@@ -373,6 +392,20 @@ public class FutsalDetailsActivity extends AppCompatActivity {
 
         };
         requestQueue.add(stringRequest);
+
+    }
+
+    private void bookFutsal(){
+        if (text_view_sorry_message.getVisibility() == View.VISIBLE){
+            Toast.makeText(FutsalDetailsActivity.this, "Sorry, there is no booking left for today.", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("futsal_details", futsalModel);
+            Intent intent = new Intent(FutsalDetailsActivity.this, ConfirmBookingActivity.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
 
     }
 }

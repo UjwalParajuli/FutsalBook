@@ -180,6 +180,21 @@
                     app:layout_constraintTop_toBottomOf="@+id/divider3" />
 
                 <TextView
+                    android:id="@+id/text_view_sorry_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/jost_regular"
+                    android:text="Sorry, there is no available time for today."
+                    android:textColor="@color/desc_text"
+                    android:textSize="14dp"
+                    android:visibility="gone"
+                    android:layout_marginBottom="16dp"
+                    app:layout_constraintBottom_toTopOf="@id/divider5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView19" />
+
+                <TextView
                     android:id="@+id/textView20"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -21,8 +21,8 @@
             android:layout_marginTop="8dp"
             android:fontFamily="@font/jost_bold"
             android:text="Pokhara Futsal's"
-            android:textColor="@color/primary_color"
-            android:textSize="24dp"
+            android:textColor="@color/futsal_item_heading"
+            android:textSize="18dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
