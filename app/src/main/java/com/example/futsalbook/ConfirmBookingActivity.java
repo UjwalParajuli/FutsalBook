@@ -201,7 +201,6 @@ public class ConfirmBookingActivity extends AppCompatActivity {
     }
 
     private void checkAvailability(){
-
             String url = "https://rajkumargurung.com.np/futsal/check_availability.php";
             progress_bar_confirm_booking.setVisibility(View.VISIBLE);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,

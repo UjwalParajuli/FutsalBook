@@ -8,7 +8,7 @@ import com.example.futsalbook.models.User;
 public class SharedPrefManager {
 
     //the constants
-    private static final String SHARED_PREF_NAME = "automobiles_nepal_user_shared_pref";
+    private static final String SHARED_PREF_NAME = "futsal_book_user_shared_pref";
     private static final String KEY_FULLNAME = "key_fullname";
     private static final String KEY_EMAIL = "key_email";
     private static final String KEY_PASSWORD = "key_password";
@@ -37,8 +37,8 @@ public class SharedPrefManager {
         editor.putInt(KEY_ID, user.getUser_id());
         editor.putString(KEY_FULLNAME, user.getFull_name());
         editor.putString(KEY_EMAIL, user.getEmail());
-        editor.putString(KEY_PASSWORD, user.getPassword());
         editor.putString(KEY_PHONE, user.getPhone());
+        editor.putString(KEY_PASSWORD, user.getPassword());
         editor.apply();
     }
 
@@ -55,8 +55,9 @@ public class SharedPrefManager {
                 sharedPreferences.getInt(KEY_ID, -1),
                 sharedPreferences.getString(KEY_FULLNAME, null),
                 sharedPreferences.getString(KEY_EMAIL, null),
-                sharedPreferences.getString(KEY_PASSWORD, null),
-                sharedPreferences.getString(KEY_PHONE, null)
+                sharedPreferences.getString(KEY_PHONE, null),
+                sharedPreferences.getString(KEY_PASSWORD, null)
+
         );
     }
 
