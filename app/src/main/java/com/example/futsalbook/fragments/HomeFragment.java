@@ -44,6 +44,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        getActivity().setTitle("Futsal Book");
         recycler_view_futsals = view.findViewById(R.id.recycler_view_futsals);
         text_view_heading_1 = view.findViewById(R.id.text_view_heading_1);
         text_view_not_found = view.findViewById(R.id.text_view_not_found);

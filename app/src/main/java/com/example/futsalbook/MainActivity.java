@@ -8,7 +8,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.example.futsalbook.fragments.BookingsFragment;
@@ -29,9 +32,24 @@ public class MainActivity extends AppCompatActivity {
         bottom_navigation_view = (BottomNavigationView) findViewById(R.id.bottom_navigation_view);
         bottom_navigation_view.setOnNavigationItemSelectedListener(nav_listener);
 
-
-
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).addToBackStack(null).commit();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.notifications){
+            Intent intent = new Intent(this, NotificationActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener nav_listener =
@@ -117,9 +135,6 @@ public class MainActivity extends AppCompatActivity {
             }
             transaction.replace(R.id.fragment_container, new HomeFragment());
             transaction.commit();
-
-
-
 
         } else {
             //super.onBackPressed();

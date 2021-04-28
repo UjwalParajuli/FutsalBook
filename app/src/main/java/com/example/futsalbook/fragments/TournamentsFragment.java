@@ -47,6 +47,8 @@ public class TournamentsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tournaments, container, false);
 
+        getActivity().setTitle("Tournaments");
+
         recycler_view_tournaments = view.findViewById(R.id.recycler_view_tournaments);
         text_view_not_found_tournaments = view.findViewById(R.id.text_view_not_found_tournaments);
         text_view_upcoming_tournaments = view.findViewById(R.id.text_view_upcoming_tournaments);

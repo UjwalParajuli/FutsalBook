@@ -50,6 +50,8 @@ public class BookmarksFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bookmarks, container, false);
 
+        getActivity().setTitle("Bookmarked");
+
         text_view_saved_futsals = view.findViewById(R.id.text_view_saved_futsals);
         text_view_not_saved_message = view.findViewById(R.id.text_view_not_saved_message);
         recycler_view_saved_items = view.findViewById(R.id.recycler_view_saved_items);

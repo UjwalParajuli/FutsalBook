@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/jost_bold"
             android:paddingLeft="15dp"
-            android:text="You haven't booked any futsal yet."
+            android:text="Recently, you haven't booked any futsal."
             android:textColor="@color/primary_color"
             android:textSize="18dp"
             android:visibility="gone"

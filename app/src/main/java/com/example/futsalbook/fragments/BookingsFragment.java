@@ -52,6 +52,8 @@ public class BookingsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bookings, container, false);
 
+        getActivity().setTitle("Bookings");
+
         text_view_my_bookings = view.findViewById(R.id.text_view_my_bookings);
         text_view_not_found_bookings = view.findViewById(R.id.text_view_not_found_bookings);
         recycler_view_futsal_bookings = view.findViewById(R.id.recycler_view_futsal_bookings);
@@ -67,7 +69,7 @@ public class BookingsFragment extends Fragment {
     }
 
     private void getBookings(){
-        String url = "https://rajkumargurung.com.np/futsal/get_bookings.php";
+        String url = "https://rajkumargurung.com.np/futsal/get_todays_bookings.php";
 
         final RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {

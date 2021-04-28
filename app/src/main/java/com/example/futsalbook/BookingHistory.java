@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -17,12 +16,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.futsalbook.adapters.NotificationAdapter;
-import com.example.futsalbook.models.FutsalModel;
-import com.example.futsalbook.models.NotificationModel;
+import com.example.futsalbook.adapters.BookingAdapter;
+import com.example.futsalbook.models.BookingModel;
 import com.example.futsalbook.models.User;
 import com.example.futsalbook.utils.ErrorUtils;
-import com.example.futsalbook.utils.ItemClickSupport;
 import com.example.futsalbook.utils.SharedPrefManager;
 
 import org.json.JSONArray;
@@ -30,48 +27,46 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NotificationActivity extends AppCompatActivity {
-    private TextView text_view_heading_notification, text_view_not_found_notification;
-    private RecyclerView recycler_view_notifications;
-    private ArrayList<NotificationModel> notificationModelArrayList;
-    private NotificationAdapter notificationAdapter;
+public class BookingHistory extends AppCompatActivity {
     private User user;
-
+    private TextView text_view_my_bookings_history, text_view_not_found_bookings_history;
+    private RecyclerView recycler_view_futsal_bookings_history;
+    private ArrayList<BookingModel> bookingModelArrayList;
+    private BookingAdapter bookingAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notification);
+        setContentView(R.layout.activity_booking_history);
 
-        this.setTitle("My Notifications");
-
-        text_view_heading_notification = findViewById(R.id.text_view_heading_notification);
-        text_view_not_found_notification = findViewById(R.id.text_view_not_found_notification);
-        recycler_view_notifications = findViewById(R.id.recycler_view_notifications);
-
-        user = SharedPrefManager.getInstance(NotificationActivity.this).getUser();
-
-        notificationModelArrayList = new ArrayList<>();
-        notificationAdapter = new NotificationAdapter(notificationModelArrayList, NotificationActivity.this);
-
-        getNotifications();
-
+        this.setTitle("Booking History");
+        
+        user = SharedPrefManager.getInstance(this).getUser();
+        text_view_my_bookings_history = findViewById(R.id.text_view_my_bookings_history);
+        text_view_not_found_bookings_history = findViewById(R.id.text_view_not_found_bookings_history);
+        recycler_view_futsal_bookings_history = findViewById(R.id.recycler_view_futsal_bookings_history);
+        
+        bookingModelArrayList = new ArrayList<>();
+        bookingAdapter = new BookingAdapter(bookingModelArrayList, BookingHistory.this);
+        
+        getBookingHistory();
     }
+    
+    private void getBookingHistory(){
+        String url = "https://rajkumargurung.com.np/futsal/get_bookings.php";
 
-    private void getNotifications(){
-        String url = "https://rajkumargurung.com.np/futsal/get_notifications.php";
-
-        final RequestQueue requestQueue = Volley.newRequestQueue(NotificationActivity.this);
+        final RequestQueue requestQueue = Volley.newRequestQueue(BookingHistory.this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response.trim().equals("not_found")) {
-                    text_view_heading_notification.setVisibility(View.GONE);
-                    recycler_view_notifications.setVisibility(View.GONE);
-                    text_view_not_found_notification.setVisibility(View.VISIBLE);
+                    text_view_my_bookings_history.setVisibility(View.GONE);
+                    recycler_view_futsal_bookings_history.setVisibility(View.GONE);
+                    text_view_not_found_bookings_history.setVisibility(View.VISIBLE);
 
                 }
                 else{
@@ -83,24 +78,26 @@ public class NotificationActivity extends AppCompatActivity {
                             jsonResponse = jsonArray.getJSONObject(i);
                             String futsal_name = jsonResponse.getString("futsal_name");
                             String location = jsonResponse.getString("location");
+                            String user_name = jsonResponse.getString("full_name");
                             String start_time = jsonResponse.getString("start_time");
                             String end_time = jsonResponse.getString("end_time");
                             String booked_date = jsonResponse.getString("booked_date");
-                            String image = jsonResponse.getString("image");
+                            String booked_on = jsonResponse.getString("booked_on");
 
-                            NotificationModel notificationModel = new NotificationModel(start_time, end_time, booked_date, futsal_name, location, image);
-                            notificationModelArrayList.add(notificationModel);
+                            BookingModel bookingModel = new BookingModel(futsal_name, location, user_name, start_time, end_time, booked_date, booked_on);
+                            bookingModelArrayList.add(bookingModel);
                         }
-
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(NotificationActivity.this, LinearLayoutManager.VERTICAL, false);
-                        recycler_view_notifications.setLayoutManager(linearLayoutManager);
-                        recycler_view_notifications.setAdapter(notificationAdapter);
+                        Collections.reverse(bookingModelArrayList);
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(BookingHistory.this, LinearLayoutManager.VERTICAL, false);
+                        recycler_view_futsal_bookings_history.setLayoutManager(linearLayoutManager);
+                        recycler_view_futsal_bookings_history.setAdapter(bookingAdapter);
                         //recycler_view_futsals.addItemDecoration(new SpacesItemDecoration(20));
-                        notificationAdapter.notifyDataSetChanged();
+                        bookingAdapter.notifyDataSetChanged();
 
                     }
+
                     catch (JSONException e) {
-                        Toast.makeText(NotificationActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BookingHistory.this, e.toString(), Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -109,7 +106,7 @@ public class NotificationActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(NotificationActivity.this, ErrorUtils.getVolleyError(error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(BookingHistory.this, ErrorUtils.getVolleyError(error), Toast.LENGTH_SHORT).show();
             }
         }) {
             @Override
